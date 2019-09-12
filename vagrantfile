@@ -1,0 +1,42 @@
+BOX_NAME = "bento/ubuntu-16.04"
+
+Vagrant.configure(2) do |config|
+
+    config.vm.define "master" do |master|
+        master.vm.box = BOX_NAME
+
+        master.vm.hostname = "master01"
+        master.vm.network "private_network", 
+            ip: "172.25.0.15"
+
+        master.vm.provider "virtualbox" do |vb|
+            vb.memory = "1024"
+            vb.cpus = 2
+            vb.customize ["modifyvm", :id, "--audio", "none", "--hwvirtex", "on"]
+            vb.customize ["modifyvm", :id, "--nicpromisc0", "allow-all"]
+            vb.customize ["modifyvm", :id, "--nicpromisc1", "allow-all"]
+            vb.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
+            vb.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
+        end
+    end
+
+    (1..2).each do |n|  
+        config.vm.define "agent0#{n}" do |agent|
+            agent.vm.box = BOX_NAME
+
+            agent.vm.hostname = "agent0#{n}"
+            agent.vm.network "private_network", 
+                ip: "172.25.0.2#{n}"
+
+            agent.vm.provider "virtualbox" do |vb|
+                vb.memory = "1024"
+                vb.cpus = 2
+                vb.customize ["modifyvm", :id, "--audio", "none", "--hwvirtex", "on"]
+                vb.customize ["modifyvm", :id, "--nicpromisc0", "allow-all"]
+                vb.customize ["modifyvm", :id, "--nicpromisc1", "allow-all"]
+                vb.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
+                vb.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
+            end
+        end
+    end
+end
